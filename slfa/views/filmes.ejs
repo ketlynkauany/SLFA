@@ -1,57 +1,45 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Novo Filme</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<title>Filmes</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-slate-900 text-white min-h-screen flex items-center justify-center">
+<body class="bg-black text-white p-10">
 
-  <form action="/filmes/novo" method="POST"
-    class="bg-slate-800 p-6 rounded-2xl w-96 space-y-4 shadow-lg">
+<h1 class="text-3xl mb-6">Lista de Filmes</h1>
 
-    <h1 class="text-2xl font-bold text-center mb-2">
-      Cadastrar Filme
-    </h1>
+<a href="/filmes/novo"
+class="bg-green-600 px-4 py-2 rounded">
+Novo Filme
+</a>
 
-    <input type="text" name="titulo" placeholder="Título" required
-      class="w-full p-2 rounded bg-slate-700"/>
+<table class="mt-6 w-full border">
 
-    <input type="number" name="ano" placeholder="Ano" required
-      class="w-full p-2 rounded bg-slate-700"/>
+<tr class="bg-zinc-800">
+<th>Título</th>
+<th>Ano</th>
+<th>Categoria</th>
+<th>⭐</th>
+<th>Ação</th>
+</tr>
 
-    <select name="id_categoria" required
-      class="w-full p-2 rounded bg-slate-700">
-      <option value="">Selecione a categoria</option>
-      <% categorias.forEach(cat => { %>
-        <option value="<%= cat.id %>">
-          <%= cat.nome_categoria %>
-        </option>
-      <% }) %>
-    </select>
+<% filmes.forEach(f => { %>
+<tr class="text-center border-t">
+<td><%= f.titulo %></td>
+<td><%= f.ano %></td>
+<td><%= f.categoria %></td>
+<td><%= f.rating %></td>
 
-    <div>
-      <label>Avaliação</label>
-      <div>
-        <% for(let i=1;i<=5;i++){ %>
-          <label>
-            <input type="radio" name="rating" value="<%= i %>">
-            ★
-          </label>
-        <% } %>
-      </div>
-    </div>
+<td>
+<a href="/filmes/delete/<%= f.id %>"
+class="text-red-500">Excluir</a>
+</td>
+</tr>
+<% }) %>
 
-    <textarea name="comentario" rows="3"
-      placeholder="Comentário"
-      class="w-full p-2 rounded bg-slate-700"></textarea>
-
-    <button class="w-full bg-blue-600 p-2 rounded">
-      Salvar
-    </button>
-
-  </form>
+</table>
 
 </body>
 </html>
