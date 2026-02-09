@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const conexao = require('../db'); // ajuste se seu caminho for diferente
+const conexao = require('../bd'); // corrigido aqui
 
 // LISTAR FILMES
 router.get('/', (req, res) => {
@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
 
     conexao.query(sql, (erro, resultados) => {
         if (erro) throw erro;
-        res.render('index', { filmes: resultados });
+        res.render('filmes', { filmes: resultados }); // corrigido
     });
 });
 
@@ -29,7 +29,6 @@ router.get('/novo', (req, res) => {
 
     conexao.query('SELECT * FROM categoria', (erro, categorias) => {
         if (erro) throw erro;
-
         res.render('novo-filme', { categorias });
     });
 });
@@ -68,4 +67,3 @@ router.get('/delete/:id', (req, res) => {
 });
 
 module.exports = router;
-
