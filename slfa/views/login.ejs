@@ -16,31 +16,24 @@
   🎬 SLFA
 </h1>
 
-<form action="/login" method="POST" class="space-y-4">
+<form action="/cadastro" method="POST">
 
-  <input
-    name="email"
-    type="email"
-    placeholder="Email"
-    required
-    class="w-full p-3 rounded bg-zinc-800 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
-  />
+<input name="nome" type="text" placeholder="Nome" required
+class="w-full p-3 rounded bg-zinc-800 text-white mb-3"/>
 
-  <input
-    name="senha"
-    type="password"
-    placeholder="Senha"
-    required
-    class="w-full p-3 rounded bg-zinc-800 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
-  />
+<input name="email" type="email" placeholder="Email" required
+class="w-full p-3 rounded bg-zinc-800 text-white mb-3"/>
 
-  <button
-    type="submit"
-    class="w-full bg-red-600 hover:bg-red-700 p-3 rounded font-semibold transition">
-    Entrar
-  </button>
+<input name="senha" type="password" placeholder="Senha (mín 8 caracteres)" required
+class="w-full p-3 rounded bg-zinc-800 text-white mb-3"/>
+
+<button type="submit"
+class="w-full bg-red-600 hover:bg-red-700 p-3 rounded font-semibold">
+Cadastrar
+</button>
 
 </form>
+
 ```
 
   </div>

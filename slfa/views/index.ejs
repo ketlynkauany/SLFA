@@ -14,12 +14,15 @@
 🎬 SLFA
 </h1>
 
-<form action="/filmes" method="GET">
+<form action="/login" method="POST">
+
+<input name="nome" type="text" placeholder="Nome" required
+class="w-full p-3 rounded bg-zinc-800 text-white mb-3"/>
 
 <input name="email" type="email" placeholder="Email" required
 class="w-full p-3 rounded bg-zinc-800 text-white mb-3"/>
 
-<input name="senha" type="password" placeholder="Senha" required
+<input name="senha" type="password" placeholder="Senha (mín 8 caracteres)" required
 class="w-full p-3 rounded bg-zinc-800 text-white mb-3"/>
 
 <button type="submit"
@@ -29,14 +32,11 @@ Entrar
 
 <p class="text-center text-gray-400 mt-4">
 Não tem conta?
-
-<a href="/filmes/novo" class="text-red-500 hover:underline">
-Cadastre-se
-</a>
-
+<a href="/cadastro" class="text-red-500 hover:underline">Cadastre-se</a>
 </p>
 
 </form>
+
 
 </div>
 </body>
