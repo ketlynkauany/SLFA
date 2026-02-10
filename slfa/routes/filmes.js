@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../bd');
 
-// middleware de proteção
+
 function verificarLogin(req, res, next) {
   if (!req.session.usuario) {
     return res.redirect('/');
@@ -10,7 +10,7 @@ function verificarLogin(req, res, next) {
   next();
 }
 
-// LISTAR FILMES
+
 router.get('/', verificarLogin, (req, res) => {
   const sql = `
     SELECT filme.id_filme, filme.titulo, filme.ano, filme.estrelas, categoria.nome_categoria
@@ -26,14 +26,14 @@ router.get('/', verificarLogin, (req, res) => {
   });
 });
 
-// NOVO FILME (página)
+
 router.get('/novo', verificarLogin, (req, res) => {
   db.query('SELECT * FROM categoria', (err, categorias) => {
     res.render('novo-filme', { categorias });
   });
 });
 
-// NOVO FILME (ação)
+
 router.post('/novo', verificarLogin, (req, res) => {
   const { titulo, ano, id_categoria, estrelas, comentario } = req.body;
 
@@ -47,7 +47,7 @@ router.post('/novo', verificarLogin, (req, res) => {
   });
 });
 
-// DELETE
+
 router.get('/delete/:id', verificarLogin, (req, res) => {
   db.query(
     'DELETE FROM filme WHERE id_filme = ?',
