@@ -1,45 +1,49 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Filmes</title>
-<script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <title>Filmes</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-gray-100 min-h-screen p-6">
 
-<body class="bg-black text-white p-10">
+  <div class="max-w-5xl mx-auto bg-white p-6 rounded shadow">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-xl font-bold">Olá, <%= usuario.nome %></h1>
+      <a href="/logout" class="text-red-600">Sair</a>
+    </div>
 
-<h1 class="text-3xl mb-6">Lista de Filmes</h1>
+    <a href="/filmes/novo"
+       class="inline-block mb-4 bg-blue-600 text-white px-4 py-2 rounded">
+       Novo Filme
+    </a>
 
-<a href="/filmes/novo"
-class="bg-green-600 px-4 py-2 rounded">
-Novo Filme
-</a>
-
-<table class="mt-6 w-full border">
-
-<tr class="bg-zinc-800">
-<th>Título</th>
-<th>Ano</th>
-<th>Categoria</th>
-<th>⭐</th>
-<th>Ação</th>
-</tr>
-
-<% filmes.forEach(f => { %>
-<tr class="text-center border-t">
-<td><%= f.titulo %></td>
-<td><%= f.ano %></td>
-<td><%= f.categoria %></td>
-<td><%= f.rating %></td>
-
-<td>
-<a href="/filmes/delete/<%= f.id %>"
-class="text-red-500">Excluir</a>
-</td>
-</tr>
-<% }) %>
-
-</table>
+    <table class="w-full border">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="p-2">Título</th>
+          <th class="p-2">Ano</th>
+          <th class="p-2">Categoria</th>
+          <th class="p-2">Estrelas</th>
+          <th class="p-2">Ação</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% filmes.forEach(f => { %>
+          <tr class="border-t text-center">
+            <td class="p-2"><%= f.titulo %></td>
+            <td class="p-2"><%= f.ano %></td>
+            <td class="p-2"><%= f.nome_categoria %></td>
+            <td class="p-2"><%= f.estrelas %></td>
+            <td class="p-2">
+              <a href="/filmes/delete/<%= f.id_filme %>"
+                 class="text-red-600">Excluir</a>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
 
 </body>
 </html>

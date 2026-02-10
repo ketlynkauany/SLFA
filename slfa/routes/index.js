@@ -1,96 +1,71 @@
-var express = require('express');
-var router = express.Router();
-
-const bcrypt = require("bcrypt");   // ⭐ ADICIONE ISSO
+const express = require('express');
+const router = express.Router();
 const db = require('../bd');
+const bcrypt = require('bcrypt');
 
-
-
-function verificarLogin(req,res,next){
-
-  if(!req.session.usuario){
-    return res.send(`
-    <h2>🔒 Você precisa fazer login</h2>
-    <a href="/login">Ir para login</a>
-    `);
-  }
-
-  next();
-}
-
-
-// HOME
-router.get('/', function(req, res) {
-  res.render('index');
+// LOGIN (página)
+router.get('/', (req, res) => {
+  res.render('index', { erro: null });
 });
 
-// PAGINA CADASTRO
-router.get('/cadastro', function(req, res) {
-  res.render('login');
+// CADASTRO (página)
+router.get('/cadastro', (req, res) => {
+  res.render('login', { erro: null });
 });
 
-
-// =============================
-// CADASTRAR USUÁRIO
-// =============================
-router.post("/cadastro", async (req,res)=>{
-
+// CADASTRO (ação)
+router.post('/cadastro', async (req, res) => {
   const { nome, email, senha } = req.body;
 
-  const hash = await bcrypt.hash(senha, 10);
+  if (!nome || !email || !senha) {
+    return res.render('login', { erro: 'Preencha todos os campos' });
+  }
 
-  db.query(
-    "INSERT INTO usuarios (nome,email,senha) VALUES (?,?,?)",
-    [nome,email,hash],
-    (err)=>{
-      if(err) return res.send("Erro ao cadastrar");
+  try {
+    const hash = await bcrypt.hash(senha, 10);
 
-      req.session.msg = "Login criado com sucesso!";
-      res.redirect("/filmes");
-    }
-  );
+    const sql = 'INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)';
+    db.query(sql, [nome, email, hash], (err) => {
+      if (err) {
+        return res.render('login', { erro: 'E-mail já cadastrado' });
+      }
+      res.redirect('/');
+    });
+  } catch (error) {
+    res.status(500).send('Erro interno');
+  }
 });
 
-
-
-router.post("/login",(req,res)=>{
-
+// LOGIN (ação)
+router.post('/login', (req, res) => {
   const { email, senha } = req.body;
 
-  db.query(
-    "SELECT * FROM usuarios WHERE email=?",
-    [email],
-    async (err,results)=>{
-
-      if(results.length === 0)
-        return res.send("Usuário não encontrado");
-
-      const user = results[0];
-
-      const ok = await bcrypt.compare(senha, user.senha);
-
-      if(!ok)
-        return res.send("Senha incorreta");
-
-      req.session.usuario = user;
-      res.redirect("/filmes");
+  const sql = 'SELECT * FROM usuarios WHERE email = ?';
+  db.query(sql, [email], async (err, results) => {
+    if (err || results.length === 0) {
+      return res.render('index', { erro: 'Usuário não encontrado' });
     }
-  );
+
+    const usuario = results[0];
+    const ok = await bcrypt.compare(senha, usuario.senha);
+
+    if (!ok) {
+      return res.render('index', { erro: 'Senha incorreta' });
+    }
+
+    req.session.usuario = {
+      id: usuario.id,
+      nome: usuario.nome
+    };
+
+    res.redirect('/filmes');
+  });
 });
 
-router.get("/filmes", verificarLogin, (req,res)=>{
-
-  let mensagem = req.session.msg || "";
-  req.session.msg = null;
-
-  res.send(`
-    <h2>Bem-vinda, ${req.session.usuario.nome}</h2>
-    <p>${mensagem}</p>
-    <p>Aqui ficam os filmes 🎬</p>
-  `);
+// LOGOUT
+router.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.redirect('/');
 });
-
-
-
 
 module.exports = router;

@@ -1,71 +1,59 @@
 const express = require('express');
 const router = express.Router();
-const conexao = require('../bd');
+const db = require('../bd');
 
+// middleware de proteção
+function verificarLogin(req, res, next) {
+  if (!req.session.usuario) {
+    return res.redirect('/');
+  }
+  next();
+}
 
-// ================= LISTAR FILMES =================
-router.get('/', (req, res) => {
+// LISTAR FILMES
+router.get('/', verificarLogin, (req, res) => {
+  const sql = `
+    SELECT filme.id_filme, filme.titulo, filme.ano, filme.estrelas, categoria.nome_categoria
+    FROM filme
+    JOIN categoria ON filme.id_categoria = categoria.id_categoria
+  `;
 
-    const sql = `
-        SELECT filme.id_filme,
-               filme.titulo,
-               filme.ano,
-               filme.estrelas,
-               filme.comentario,
-               categoria.nome_categoria AS categoria
-        FROM filme
-        LEFT JOIN categoria
-        ON filme.id_categoria = categoria.id_categoria
-    `;
-
-    conexao.query(sql, (erro, resultados) => {
-        if (erro) throw erro;
-        res.render('filmes', { filmes: resultados });
+  db.query(sql, (err, results) => {
+    res.render('filmes', {
+      filmes: results,
+      usuario: req.session.usuario
     });
+  });
 });
 
-
-// ================= FORM NOVO FILME =================
-router.get('/novo', (req, res) => {
-
-    conexao.query('SELECT * FROM categoria', (erro, categorias) => {
-        if (erro) throw erro;
-        res.render('novo-filme', { categorias });
-    });
+// NOVO FILME (página)
+router.get('/novo', verificarLogin, (req, res) => {
+  db.query('SELECT * FROM categoria', (err, categorias) => {
+    res.render('novo-filme', { categorias });
+  });
 });
 
+// NOVO FILME (ação)
+router.post('/novo', verificarLogin, (req, res) => {
+  const { titulo, ano, id_categoria, estrelas, comentario } = req.body;
 
-// ================= INSERIR FILME =================
-router.post('/novo', (req, res) => {
+  const sql = `
+    INSERT INTO filme (titulo, ano, id_categoria, estrelas, comentario)
+    VALUES (?, ?, ?, ?, ?)
+  `;
 
-    const { titulo, ano, id_categoria, estrelas, comentario } = req.body;
-
-    const sql = `
-        INSERT INTO filme
-        (titulo, ano, id_categoria, estrelas, comentario)
-        VALUES (?, ?, ?, ?, ?)
-    `;
-
-    conexao.query(sql,
-        [titulo, ano, id_categoria, estrelas, comentario],
-        (erro) => {
-            if (erro) throw erro;
-            res.redirect('/filmes');
-        }
-    );
+  db.query(sql, [titulo, ano, id_categoria, estrelas, comentario], () => {
+    res.redirect('/filmes');
+  });
 });
 
-
-// ================= DELETAR FILME =================
-router.get('/delete/:id', (req, res) => {
-
-    const sql = 'DELETE FROM filme WHERE id_filme = ?';
-
-    conexao.query(sql, [req.params.id], (erro) => {
-        if (erro) throw erro;
-        res.redirect('/filmes');
-    });
+// DELETE
+router.get('/delete/:id', verificarLogin, (req, res) => {
+  db.query(
+    'DELETE FROM filme WHERE id_filme = ?',
+    [req.params.id],
+    () => res.redirect('/filmes')
+  );
 });
-
 
 module.exports = router;
